@@ -13,7 +13,13 @@ if(ENABLE_SIMD_AVX2)
     target_compile_options(${target} PRIVATE $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:-mfma>)
 endif()
 
-target_link_libraries(${target} libbenchmark libsimd)
+target_link_libraries(${target}
+    PRIVATE
+        ${DEFAULT_LIBRARIES}
+        ${Boost_LIBRARIES}
+        libbenchmark
+        libsimd
+)
 
 set_target_properties(${target}
     PROPERTIES

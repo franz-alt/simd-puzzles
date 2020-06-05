@@ -1,9 +1,12 @@
 #include <algorithm>
 #include <chrono>
 #include <cstdint>
+#include <fstream>
 #include <iostream>
 #include <random>
 #include <vector>
+
+#include <boost/program_options.hpp>
 
 #include <libbenchmark/testrun.hpp>
 
@@ -16,8 +19,29 @@
 
 #endif
 
-int main()
+int main(int argc, char * argv[])
 {
+	namespace po = boost::program_options;
+
+	po::options_description general_options("general options");
+	general_options.add_options()
+		("help,h", "show this help text")
+		("csv,c", "generate CSV files with performance results")
+	;
+
+	po::options_description cmdline_options("usage: bench_sum [options]");
+	cmdline_options.add(general_options);
+
+	po::variables_map variables;
+	po::store(po::parse_command_line(argc, argv, cmdline_options), variables);
+	po::notify(variables);
+
+	if (variables.count("help"))
+	{
+		std::cout << cmdline_options;
+		return 1;
+	}
+
 	// create random numbers (inspired by https://en.cppreference.com/w/cpp/numeric/random/uniform_int_distribution)
 
     std::random_device rd;  // will be used to obtain a seed for the random number engine
@@ -122,6 +146,14 @@ int main()
 #endif
 
 	std::cout << tr.to_string() << std::flush;
+
+	if (variables.count("csv"))
+	{
+		std::ofstream file;
+		file.open("sum.csv");
+		file << tr.to_csv();
+		file.close();
+	}
 
 	return 0;
 }
