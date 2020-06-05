@@ -21,6 +21,8 @@ public:
 
     std::string to_string() const;
 
+    std::string to_csv() const;
+
 private:
     std::string m_title;
 

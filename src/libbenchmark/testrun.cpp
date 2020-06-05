@@ -59,4 +59,26 @@ std::string testrun::to_string() const
     return ss.str();
 }
 
+std::string testrun::to_csv() const
+{
+    std::stringstream ss;
+    ss << "Procedure,Average (in us),Speedup" << std::endl;
+
+    double reference_value = 0.0;
+
+    if (!m_results.empty())
+    {
+        reference_value = m_results.front().microseconds();
+    }
+
+    for (auto const & result : m_results)
+    {
+        ss << result.title() << ","
+           << std::setprecision(2) << std::fixed << result.microseconds() << ","
+           << std::setprecision(2) << std::fixed << (reference_value / result.microseconds()) << std::endl;
+    }
+
+    return ss.str();
+}
+
 } // namespace benchmark
