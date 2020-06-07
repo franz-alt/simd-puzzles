@@ -1,14 +1,16 @@
 #include <algorithm>
 #include <chrono>
+#include <cmath>
 #include <cstdint>
 #include <fstream>
 #include <iostream>
 #include <random>
+#include <string>
 #include <vector>
 
 #include <boost/program_options.hpp>
 
-#include <libbenchmark/testrun.hpp>
+#include <libbenchmark/testsuite.hpp>
 
 #include <libsimd/algorithms/sum/naive.hpp>
 
@@ -19,48 +21,19 @@
 
 #endif
 
-int main(int argc, char * argv[])
+const std::size_t repeats = 100;
+
+benchmark::testrun perform_test(std::uniform_int_distribution<> & distribution, std::mt19937 & generator, std::size_t values)
 {
-	namespace po = boost::program_options;
-
-	po::options_description general_options("general options");
-	general_options.add_options()
-		("help,h", "show this help text")
-		("csv,c", "generate CSV files with performance results")
-	;
-
-	po::options_description cmdline_options("usage: bench_sum [options]");
-	cmdline_options.add(general_options);
-
-	po::variables_map variables;
-	po::store(po::parse_command_line(argc, argv, cmdline_options), variables);
-	po::notify(variables);
-
-	if (variables.count("help"))
-	{
-		std::cout << cmdline_options;
-		return 1;
-	}
-
-	// create random numbers (inspired by https://en.cppreference.com/w/cpp/numeric/random/uniform_int_distribution)
-
-    std::random_device rd;  // will be used to obtain a seed for the random number engine
-    std::mt19937 gen(rd()); // standard mersenne_twister_engine seeded with rd()
-
-    std::uniform_int_distribution<> dist(0, 255);
-
-	const std::size_t values = 4096 * 8 * 100;
-	const std::size_t repeats = 1000;
-
 	std::vector<std::uint8_t> data;
 	data.reserve(values);
 
  	for (std::size_t n = 0; n < values; ++n)
 	{
-        data.push_back(dist(gen));
+        data.push_back(distribution(generator));
     }
 
-	benchmark::testrun tr("sum");
+	benchmark::testrun tr(values);
 
 	// naive without SIMD
 	{
@@ -145,14 +118,81 @@ int main(int argc, char * argv[])
 	}
 #endif
 
-	std::cout << tr.to_string() << std::flush;
+	return tr;
+}
+
+int main(int argc, char * argv[])
+{
+	namespace po = boost::program_options;
+
+	po::options_description general_options("general options");
+	general_options.add_options()
+		("help,h", "show this help text")
+		("csv,c", "generate separate CSV files of performance results")
+		("csv-all", "generate a single CSV file of all performance results")
+	;
+
+	po::options_description cmdline_options("usage: bench_sum [options]");
+	cmdline_options.add(general_options);
+
+	po::variables_map variables;
+	po::store(po::parse_command_line(argc, argv, cmdline_options), variables);
+	po::notify(variables);
+
+	if (variables.count("help"))
+	{
+		std::cout << cmdline_options;
+		return 1;
+	}
+
+	// create random numbers (inspired by https://en.cppreference.com/w/cpp/numeric/random/uniform_int_distribution)
+
+    std::random_device rd;  // will be used to obtain a seed for the random number engine
+    std::mt19937 gen(rd()); // standard mersenne_twister_engine seeded with rd()
+
+    std::uniform_int_distribution<> dist(0, 255);
+
+	benchmark::testsuite ts("sum");
+
+	for (std::size_t i = 4; i <= 15; ++i)
+	{
+		ts.add(perform_test(dist, gen, 1024 * std::pow(2, i)));
+	}
+
+	std::cout << ts.to_string() << std::endl;
 
 	if (variables.count("csv"))
 	{
-		std::ofstream file;
-		file.open("sum.csv");
-		file << tr.to_csv();
-		file.close();
+		for (auto const & r : ts.to_csv())
+		{
+			std::string filename(ts.title());
+			filename.append("_");
+			filename.append(std::to_string(r.quantity));
+			filename.append(".csv");
+			std::replace(filename.begin(), filename.end(), ' ', '_');
+
+			std::ofstream file;
+			file.open(filename);
+			file << r.data;
+			file.close();
+		}
+	}
+
+	if (variables.count("csv-all"))
+	{
+		auto r = ts.to_csv(false);
+
+		if (!r.empty())
+		{
+			std::string filename(ts.title());
+			filename.append("_all.csv");
+			std::replace(filename.begin(), filename.end(), ' ', '_');
+
+			std::ofstream file;
+			file.open(filename);
+			file << r.front().data;
+			file.close();
+		}
 	}
 
 	return 0;
