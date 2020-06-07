@@ -7,15 +7,25 @@
 
 namespace benchmark {
 
-testrun::testrun(std::string title)
-    : m_title(std::move(title))
+testrun::testrun(std::size_t quantity)
+    : m_quantity(quantity)
     , m_results()
 {}
+
+std::size_t testrun::quantity() const
+{
+    return m_quantity;
+}
+
+std::vector<result> const & testrun::results() const
+{
+    return m_results;
+}
 
 std::string testrun::to_string() const
 {
     std::stringstream ss;
-    ss << "testrun: '" << m_title << "'" << std::endl << std::endl;
+    ss << "quantity: " << m_quantity << std::endl << std::endl;
 
     double reference_value = 0.0;
 
@@ -62,7 +72,7 @@ std::string testrun::to_string() const
 std::string testrun::to_csv() const
 {
     std::stringstream ss;
-    ss << "Procedure,Average (in us),Speedup" << std::endl;
+    ss << "Procedure,Average" << std::endl;
 
     double reference_value = 0.0;
 
@@ -74,8 +84,7 @@ std::string testrun::to_csv() const
     for (auto const & result : m_results)
     {
         ss << result.title() << ","
-           << std::setprecision(2) << std::fixed << result.microseconds() << ","
-           << std::setprecision(2) << std::fixed << (reference_value / result.microseconds()) << std::endl;
+           << std::setprecision(2) << std::fixed << result.microseconds() << std::endl;
     }
 
     return ss.str();

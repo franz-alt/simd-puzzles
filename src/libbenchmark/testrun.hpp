@@ -11,7 +11,9 @@ namespace benchmark {
 class testrun
 {
 public:
-    testrun(std::string title);
+    testrun(std::size_t quantity);
+
+    std::size_t quantity() const;
 
     template<typename... Args>
     void add_result(Args... args)
@@ -19,12 +21,14 @@ public:
         m_results.emplace_back(std::forward<Args>(args)...);
     }
 
+    std::vector<result> const & results() const;
+
     std::string to_string() const;
 
     std::string to_csv() const;
 
 private:
-    std::string m_title;
+    std::size_t m_quantity;
 
     std::vector<result> m_results;
 };

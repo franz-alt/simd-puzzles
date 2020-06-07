@@ -5,11 +5,13 @@ message(STATUS "Library '${target}'")
 set(headers
     result.hpp
     testrun.hpp
+    testsuite.hpp
 )
 
 set(sources
     result.cpp
     testrun.cpp
+    testsuite.cpp
 )
 
 add_library(${target} STATIC ${sources} ${headers})
