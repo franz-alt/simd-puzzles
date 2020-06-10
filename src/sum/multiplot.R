@@ -25,7 +25,7 @@ for (file in files)
         labs(title = "Sum Array Of Bytes", x = "Array Length (Bytes)", y = "Average Time (Microseconds)") +
         theme(legend.title = element_blank()) + theme(plot.title = element_text(hjust = 0.5))
 
-    file = gsub(".csv", ",jpg", file)
+    file = gsub(".csv", ".jpg", file)
 
     ggsave(file, width = 10, height = 5, dpi = 100, units = "in", device = "jpg")
 }

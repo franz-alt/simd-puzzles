@@ -20,7 +20,7 @@ for (file in files)
     p <- ggplot(transformed_data, aes(x = Procedure, y = value, fill = variable)) + geom_bar(stat = "identity", fill = "steelblue", position = position_dodge())
     p + coord_flip() + labs(y = "Average Time (Microseconds)")
 
-    file = gsub(".csv", ",jpg", file)
+    file = gsub(".csv", ".jpg", file)
 
     ggsave(file, width = 10, height = 3, dpi = 75, units = "in", device = "jpg")
 }
