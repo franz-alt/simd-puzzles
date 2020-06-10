@@ -21,6 +21,23 @@ With this project I would like to collect some algorithmic SIMD puzzles and comp
 * Compare multithreaded executions
 * ...
 
+## Building
+
+### Requirements
+
+* C++ 17 compiler
+* CMake 3.6 or later
+* CPU with at least AVX2 instruction set
+
+### Example
+
+To build the library on Unix/Linux try:
+
+    mkdir build
+    cd build
+    cmake ..
+    make -j`nproc`
+
 ## Extend Puzzles
 
 TODO
