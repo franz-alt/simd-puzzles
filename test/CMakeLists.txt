@@ -9,6 +9,11 @@ set(sources
 
 add_executable(${target} ${sources})
 
+target_compile_options(${target}
+	PRIVATE
+		$<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:-Wall -Wextra>
+)
+
 target_link_libraries(${target}
     PRIVATE
         ${DEFAULT_LIBRARIES}
