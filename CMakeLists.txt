@@ -23,6 +23,12 @@ if(ENABLE_SIMD_AVX2)
     add_definitions(-DENABLE_SIMD_AVX2)
 endif()
 
+# set optimization level
+set(OPTIMIZATION_LEVEL "O2" CACHE STRING "Choose optimization level.")
+set_property(CACHE OPTIMIZATION_LEVEL PROPERTY STRINGS "O1" "O2" "O3")
+
+message(STATUS "Use optimization level '${OPTIMIZATION_LEVEL}'")
+
 # unit testing
 add_subdirectory(${PROJECT_SOURCE_DIR}/extern/googletest)
 enable_testing()

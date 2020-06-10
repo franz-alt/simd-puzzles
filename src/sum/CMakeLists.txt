@@ -11,6 +11,7 @@ add_executable(${target} ${sources} ${headers})
 target_compile_options(${target}
 	PRIVATE
 		$<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:-Wall -Wextra>
+		$<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:-${OPTIMIZATION_LEVEL}>
 )
 
 if(ENABLE_SIMD_AVX2)
