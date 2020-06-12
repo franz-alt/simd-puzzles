@@ -28,6 +28,12 @@ command -v awk >/dev/null 2>&1 || { echo >&2 "awk is required but not installed.
 # determine CPU model name
 CPU_MODEL_NAME=`LC_ALL=C lscpu | grep 'Model name' | cut -f 2 -d ":" | awk '{$1=$1}1' | sed -e 's/ /_/g'`
 
+# create directory for all results
+
+RESULT_DIR=$ROOT/results
+
+mkdir -p $RESULT_DIR
+
 if [ -z "$GCC_INSTALLED" ]; then
     echo "GCC installed"
 
@@ -38,23 +44,23 @@ if [ -z "$GCC_INSTALLED" ]; then
     # build benchmark program with optimization level O1
     cmake ../../../ -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DOPTIMIZATION_LEVEL=O1
     make -j`nproc`
-    mv bench_sum $ROOT/bench_sum.gcc-O1
+    mv bench_sum $RESULT_DIR/bench_sum.gcc-O1
 
     rm -rf *
 
     # build benchmark program with optimization level O2
     cmake ../../../ -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DOPTIMIZATION_LEVEL=O2
     make -j`nproc`
-    mv bench_sum $ROOT/bench_sum.gcc-O2
+    mv bench_sum $RESULT_DIR/bench_sum.gcc-O2
 
     rm -rf *
 
     # build benchmark program with optimization level O3
     cmake ../../../ -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DOPTIMIZATION_LEVEL=O3
     make -j`nproc`
-    mv bench_sum $ROOT/bench_sum.gcc-O3
+    mv bench_sum $RESULT_DIR/bench_sum.gcc-O3
 
-    cd $ROOT
+    cd $RESULT_DIR
 
     # start benchmark for optimization level O1
     ./bench_sum.gcc-O1 --csv-all
@@ -77,23 +83,23 @@ if [ -z "$CLANG_INSTALLED" ]; then
     # build benchmark program with optimization level O1
     cmake ../../../ -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DOPTIMIZATION_LEVEL=O1
     make -j`nproc`
-    mv bench_sum $ROOT/bench_sum.clang-O1
+    mv bench_sum $RESULT_DIR/bench_sum.clang-O1
 
     rm -rf *
 
     # build benchmark program with optimization level O2
     cmake ../../../ -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DOPTIMIZATION_LEVEL=O2
     make -j`nproc`
-    mv bench_sum $ROOT/bench_sum.clang-O2
+    mv bench_sum $RESULT_DIR/bench_sum.clang-O2
 
     rm -rf *
 
     # build benchmark program with optimization level O3
     cmake ../../../ -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DOPTIMIZATION_LEVEL=O3
     make -j`nproc`
-    mv bench_sum $ROOT/bench_sum.clang-O3
+    mv bench_sum $RESULT_DIR/bench_sum.clang-O3
 
-    cd $ROOT
+    cd $RESULT_DIR
 
     # start benchmark for optimization level O1
     ./bench_sum.clang-O1 --csv-all
@@ -107,4 +113,4 @@ if [ -z "$CLANG_INSTALLED" ]; then
 fi
 
 # create plots
-Rscript multiplot.R
+Rscript ../multiplot.R
