@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <libsimd/algorithms/sum/naive.hpp>
+#include <libsimd/algorithms/sum/avx2/add.hpp>
 #include <libsimd/algorithms/sum/avx2/hadd.hpp>
 #include <libsimd/algorithms/sum/avx2/sad.hpp>
 
@@ -36,6 +37,16 @@ TEST(test_sum, sum_avx2_hadd)
 
     auto data = generate_ascending_data(n);
     auto sum = simd::algorithms::avx2::sum_hadd(&data[0], n);
+
+    ASSERT_TRUE(sum == ((n * (n + 1)) / 2));
+}
+
+TEST(test_sum, sum_avx2_add)
+{
+    const std::size_t n = 32 * 7;
+
+    auto data = generate_ascending_data(n);
+    auto sum = simd::algorithms::avx2::sum_add(&data[0], n);
 
     ASSERT_TRUE(sum == ((n * (n + 1)) / 2));
 }

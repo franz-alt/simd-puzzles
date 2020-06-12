@@ -16,6 +16,7 @@
 
 #ifdef ENABLE_SIMD_AVX2
 
+#include <libsimd/algorithms/sum/avx2/add.hpp>
 #include <libsimd/algorithms/sum/avx2/hadd.hpp>
 #include <libsimd/algorithms/sum/avx2/sad.hpp>
 
@@ -88,6 +89,33 @@ benchmark::testrun perform_test(std::uniform_int_distribution<> & distribution, 
 								   });
 
 		tr.add_result("AVX2 (hadd)", sum / static_cast<double>(repeats));
+	}
+
+	// AVX2 with 'add' instruction
+	{
+		std::vector<std::chrono::microseconds> durations;
+		durations.reserve(repeats);
+
+		for (std::size_t i = 0; i < repeats; ++i)
+		{
+			auto start = std::chrono::system_clock::now();
+
+			simd::algorithms::avx2::sum_add(&data[0], data.size());
+
+			auto stop = std::chrono::system_clock::now();
+
+			durations.push_back(std::chrono::duration_cast<std::chrono::microseconds>(stop - start));
+		}
+
+		auto sum = std::accumulate(durations.begin(),
+								   durations.end(),
+								   static_cast<std::size_t>(0),
+								   [](std::size_t sum, auto duration)
+								   {
+									   return sum + duration.count();
+								   });
+
+		tr.add_result("AVX2 (add)", sum / static_cast<double>(repeats));
 	}
 
 	// AVX2 with 'sad' instruction

@@ -4,6 +4,7 @@ message(STATUS "Library '${target}'")
 
 set(headers
 	algorithms/sum/naive.hpp
+	algorithms/sum/avx2/add.hpp
 	algorithms/sum/avx2/hadd.hpp
 	algorithms/sum/avx2/sad.hpp
 	utils/to_string.hpp
@@ -11,6 +12,7 @@ set(headers
 
 set(sources
 	algorithms/sum/naive.cpp
+	algorithms/sum/avx2/add.cpp
 	algorithms/sum/avx2/hadd.cpp
 	algorithms/sum/avx2/sad.cpp
 	utils/to_string.cpp
