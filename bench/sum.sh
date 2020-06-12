@@ -19,6 +19,15 @@ fi
 # check if Rscript is installed
 command -v Rscript >/dev/null 2>&1 || { echo >&2 "Rscript is required but not installed. Aborting."; exit 1; }
 
+# check if sed is installed
+command -v sed >/dev/null 2>&1 || { echo >&2 "sed is required but not installed. Aborting."; exit 1; }
+
+# check if awk is installed
+command -v awk >/dev/null 2>&1 || { echo >&2 "awk is required but not installed. Aborting."; exit 1; }
+
+# determine CPU model name
+CPU_MODEL_NAME=`LC_ALL=C lscpu | grep 'Model name' | cut -f 2 -d ":" | awk '{$1=$1}1' | sed -e 's/ /_/g'`
+
 if [ -z "$GCC_INSTALLED" ]; then
     echo "GCC installed"
 
@@ -49,13 +58,13 @@ if [ -z "$GCC_INSTALLED" ]; then
 
     # start benchmark for optimization level O1
     ./bench_sum.gcc-O1 --csv-all
-    mv sum_all.csv sum.gcc-O1_all.csv
+    mv sum_all.csv "sum.$CPU_MODEL_NAME.gcc-O1_all.csv"
 
     ./bench_sum.gcc-O2 --csv-all
-    mv sum_all.csv sum.gcc-O2_all.csv
+    mv sum_all.csv "sum.$CPU_MODEL_NAME.gcc-O2_all.csv"
 
     ./bench_sum.gcc-O3 --csv-all
-    mv sum_all.csv sum.gcc-O3_all.csv
+    mv sum_all.csv "sum.$CPU_MODEL_NAME.gcc-O3_all.csv"
 fi
 
 if [ -z "$CLANG_INSTALLED" ]; then
@@ -88,13 +97,13 @@ if [ -z "$CLANG_INSTALLED" ]; then
 
     # start benchmark for optimization level O1
     ./bench_sum.clang-O1 --csv-all
-    mv sum_all.csv sum.clang-O1_all.csv
+    mv sum_all.csv "sum.$CPU_MODEL_NAME.clang-O1_all.csv"
 
     ./bench_sum.clang-O2 --csv-all
-    mv sum_all.csv sum.clang-O2_all.csv
+    mv sum_all.csv "sum.$CPU_MODEL_NAME.clang-O2_all.csv"
 
     ./bench_sum.clang-O3 --csv-all
-    mv sum_all.csv sum.clang-O3_all.csv
+    mv sum_all.csv "sum.$CPU_MODEL_NAME.clang-O3_all.csv"
 fi
 
 # create plots
