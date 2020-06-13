@@ -63,6 +63,7 @@ The main directories are:
 * C++ 17 compiler
 * CMake 3.6 or later
 * CPU with at least AVX2 instruction set
+* Rscript
 
 ### Example
 
