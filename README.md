@@ -21,6 +21,41 @@ With this project I would like to collect some algorithmic SIMD puzzles and comp
 * Compare multithreaded executions
 * ...
 
+## Directory Structure
+
+The main project directory structure is figured in the following tree.
+
+    .
+    ├── bench
+    │   └── <puzzle benchmark scripts>
+    ├── cmake
+    ├── doc
+    │   └── <puzzle docs>
+    ├── extern
+    ├── src
+    │   ├── libbenchmark
+    │   ├── libsimd
+    │   │   ├── algorithms
+    │   │   │   └── <puzzle SIMD sources>
+    │   │   └── utils
+    │   └── <puzzle sources>
+    └── test
+        └── <puzzle unit tests>
+
+The main directories are:
+
+* bench: Containing scripts to generate benchmarks for each puzzle.
+* cmake: CMake stuff.
+* doc: Subdirectories containing documentation of all puzzles with their performance results.
+* extern: Used GIT submodules.
+* src:
+    * libbenchmark: Library containing code to manage the results of testruns, testsuites and to generate the CSV result files.
+    * libsimd:
+        * algorithms: (SIMD) sources of each puzzle.
+        * utils: Some utils needfull to develop the SIMD puzzles.
+    * Puzzle relevant source.
+* test: Unit tests for all puzzles to ensure the correctness of all puzzle approach algorithms.
+
 ## Building
 
 ### Requirements
