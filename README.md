@@ -6,7 +6,7 @@ Algorithmic problems optimized with SIMD
 
 During some software projects I had have to optimize different types of algorithms to improve their speed with SIMD techniques. Basically I've made a fallback version of an algorithm without SIMD. After that I've tried to write a SIMD version of the algorithm and push this version as fast as I can. In most cases, I did this without being able to compare different SIMD implementations of an algorithm because there was no suitable test environment for different implementation approaches.
 
-With this project I would like to collect some algorithmic SIMD puzzles and compare these on different architectures and compilers. Furthermore I hope some other guys also writing algorithms puzzles and optimize these with SIMD. :smiley:
+With this project I would like to collect some algorithmic SIMD puzzles and compare these on different architectures and compilers. Furthermore I hope some other guys [contributing](./CONTRIBUTING.md) algorithms puzzles and optimize these with SIMD. :smiley:
 
 ## Puzzles
 
