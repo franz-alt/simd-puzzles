@@ -14,7 +14,7 @@ std::uint32_t sum_hadd(std::uint8_t * data, std::size_t size)
     auto partial_sum =
         [&shuffle_mask](__m128i const & data, __m128i & result)
         {
-                    // convert lower half of 128-bit register of 'data' from 8-bit values to 32-bit values
+            // convert lower half of 128-bit register of 'data' from 8-bit values to 32-bit values
             __m256i converted_low = _mm256_cvtepu8_epi32(data);
 
             // shuffle data to process upper half of 128-bit register of 'data'
