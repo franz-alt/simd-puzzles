@@ -13,8 +13,8 @@
 
 namespace simd::utils {
 
-std::string to_string(__m128i const & data, std::string const & description = "", bool generate_header = false);
-std::string to_string(__m256i const & data, std::string const & description = "", bool generate_header = false);
+std::string to_string(__m128i const & data, std::string const & description = "", bool generate_header = false, bool descending = true);
+std::string to_string(__m256i const & data, std::string const & description = "", bool generate_header = false, bool descending = true);
 
 } // namespace simd::utils
 

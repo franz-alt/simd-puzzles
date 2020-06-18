@@ -8,14 +8,22 @@
 
 namespace simd::utils {
 
-std::string to_string(__m128i const & data, std::string const & description, bool generate_header)
+std::string to_string(__m128i const & data, std::string const & description, bool generate_header, bool descending)
 {
   std::stringstream ss;
 
   if (generate_header)
   {
       ss << std::string(description.size() + 2, ' ');
-      ss << "[127...........................................0]" << std::endl;
+
+      if (descending)
+      {
+          ss << "[127...........................................0]" << std::endl;
+      }
+      else
+      {
+          ss << "[0...........................................127]" << std::endl;
+      }
   }
 
   if (!description.empty())
@@ -29,7 +37,7 @@ std::string to_string(__m128i const & data, std::string const & description, boo
 
   for (std::uint8_t i = 0; i < 16; ++i)
   {
-      ss << std::setfill('0') << std::setw(2) << std::right << std::hex << static_cast<int>(raw[31 - i]);
+      ss << std::setfill('0') << std::setw(2) << std::right << std::hex << static_cast<int>(raw[descending ? (31 - i) : i]);
 
       if (i < 15)
       {
@@ -42,14 +50,22 @@ std::string to_string(__m128i const & data, std::string const & description, boo
   return ss.str();
 }
 
-std::string to_string(__m256i const & data, std::string const & description, bool generate_header)
+std::string to_string(__m256i const & data, std::string const & description, bool generate_header, bool descending)
 {
     std::stringstream ss;
 
     if (generate_header)
     {
         ss << std::string(description.size() + 2, ' ');
-        ss << "[255.........................................128|127...........................................0]" << std::endl;
+
+        if (descending)
+        {
+            ss << "[255.........................................128|127...........................................0]" << std::endl;
+        }
+        else
+        {
+            ss << "[0...........................................127|128.........................................255]" << std::endl;
+        }
     }
 
     if (!description.empty())
@@ -63,7 +79,7 @@ std::string to_string(__m256i const & data, std::string const & description, boo
 
     for (std::uint8_t i = 0; i < 32; ++i)
     {
-        ss << std::setfill('0') << std::setw(2) << std::right << std::hex << static_cast<int>(raw[31 - i]);
+        ss << std::setfill('0') << std::setw(2) << std::right << std::hex << static_cast<int>(raw[descending ? (31 - i) : i]);
 
         if (i < 31)
         {
