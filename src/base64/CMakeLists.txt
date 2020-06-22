@@ -1,14 +1,12 @@
-set(target tests)
+set(target bench_base64)
 
-message(STATUS "Test application '${target}'")
+message(STATUS "Application '${target}'")
 
 set(sources
-    base64.cpp
     main.cpp
-    sum.cpp
 )
 
-add_executable(${target} ${sources})
+add_executable(${target} ${sources} ${headers})
 
 target_compile_options(${target}
 	PRIVATE
@@ -16,10 +14,16 @@ target_compile_options(${target}
 		$<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:-${OPTIMIZATION_LEVEL}>
 )
 
+if(ENABLE_SIMD_AVX2)
+    target_compile_options(${target} PRIVATE $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:-mavx2>)
+    target_compile_options(${target} PRIVATE $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:-mfma>)
+endif()
+
 target_link_libraries(${target}
     PRIVATE
         ${DEFAULT_LIBRARIES}
-        gtest_main
+        ${Boost_LIBRARIES}
+        libbenchmark
         libsimd
 )
 
@@ -28,5 +32,3 @@ set_target_properties(${target}
         ${DEFAULT_PROJECT_OPTIONS}
         ${BUILDTYPE}_POSTFIX "${TARGET_PREFIX}"
 )
-
-add_test(NAME test_sum COMMAND tests)

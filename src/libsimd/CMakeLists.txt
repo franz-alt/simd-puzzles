@@ -3,6 +3,8 @@ set(target libsimd)
 message(STATUS "Library '${target}'")
 
 set(headers
+	algorithms/base64/naive.hpp
+	algorithms/base64/avx2/shuffle.hpp
 	algorithms/sum/naive.hpp
 	algorithms/sum/avx2/add.hpp
 	algorithms/sum/avx2/hadd.hpp
@@ -11,6 +13,8 @@ set(headers
 )
 
 set(sources
+	algorithms/base64/naive.cpp
+	algorithms/base64/avx2/shuffle.cpp
 	algorithms/sum/naive.cpp
 	algorithms/sum/avx2/add.cpp
 	algorithms/sum/avx2/hadd.cpp
