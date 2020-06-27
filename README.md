@@ -12,11 +12,12 @@ With this project I would like to collect some algorithmic SIMD puzzles and comp
 
 | Algorithm | AVX2 | AVX-512 | NEON |
 |-----------|------|---------|------|
+| [Base64 Encode/Decode](./doc/base64/base64.md) | :heavy_check_mark: | :x: | :x: |
 | [Sum Bytes](./doc/sum/sum.md) | :heavy_check_mark: | :x: | :x: |
 
 ## Planned
 
-* Further more puzzles (Base64, ...)
+* Further more puzzles
 * AVX-512 and NEON implementations
 * Compare multithreaded executions
 * ...
