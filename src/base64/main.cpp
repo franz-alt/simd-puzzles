@@ -22,7 +22,7 @@
 
 const std::size_t repeats = 100;
 
-benchmark::testrun perform_test(std::uniform_int_distribution<> & distribution, std::mt19937 & generator, std::size_t values)
+benchmark::testrun perform_test_to_base64(std::uniform_int_distribution<> & distribution, std::mt19937 & generator, std::size_t values)
 {
     std::vector<std::uint8_t> data;
 	data.reserve(values);
@@ -100,6 +100,83 @@ benchmark::testrun perform_test(std::uniform_int_distribution<> & distribution, 
     return tr;
 }
 
+benchmark::testrun perform_test_from_base64(std::uniform_int_distribution<> & distribution, std::mt19937 & generator, std::size_t values)
+{
+    std::vector<std::uint8_t> data;
+	data.reserve(values);
+
+	for (std::size_t n = 0; n < values; ++n)
+	{
+        data.push_back(distribution(generator));
+    }
+
+    const std::uint32_t length = data.size();
+    const std::uint32_t result_length = static_cast<std::uint32_t>(std::ceil(length / 4.0 * 3.0));
+
+    std::vector<std::uint8_t> result;
+    result.resize(result_length);
+
+	benchmark::testrun tr(values);
+
+	// naive without SIMD
+	{
+		std::vector<std::chrono::microseconds> durations;
+		durations.reserve(repeats);
+
+		for (std::size_t i = 0; i < repeats; ++i)
+		{
+			auto start = std::chrono::system_clock::now();
+
+			simd::algorithms::from_base64_naive(&data[0], length, &result[0]);
+
+			auto stop = std::chrono::system_clock::now();
+
+			durations.push_back(std::chrono::duration_cast<std::chrono::microseconds>(stop - start));
+		}
+
+		auto sum = std::accumulate(durations.begin(),
+								   durations.end(),
+								   static_cast<std::size_t>(0),
+								   [](std::size_t sum, auto duration)
+								   {
+									   return sum + duration.count();
+								   });
+
+        tr.add_result("naive", sum / static_cast<double>(repeats));
+    }
+
+#ifdef ENABLE_SIMD_AVX2
+	// AVX2 with byte mapping
+	{
+		std::vector<std::chrono::microseconds> durations;
+		durations.reserve(repeats);
+
+		for (std::size_t i = 0; i < repeats; ++i)
+		{
+			auto start = std::chrono::system_clock::now();
+
+			simd::algorithms::avx2::from_base64_shuffle(&data[0], length, &result[0]);
+
+			auto stop = std::chrono::system_clock::now();
+
+			durations.push_back(std::chrono::duration_cast<std::chrono::microseconds>(stop - start));
+		}
+
+		auto sum = std::accumulate(durations.begin(),
+								   durations.end(),
+								   static_cast<std::size_t>(0),
+								   [](std::size_t sum, auto duration)
+								   {
+									   return sum + duration.count();
+								   });
+
+		tr.add_result("AVX2 (shuffle)", sum / static_cast<double>(repeats));
+	}
+#endif
+
+	return tr;
+}
+
 int main(int argc, char * argv[])
 {
 	namespace po = boost::program_options;
@@ -131,20 +208,43 @@ int main(int argc, char * argv[])
 
     std::uniform_int_distribution<> dist(0, 127);
 
-	benchmark::testsuite ts("base64");
+	benchmark::testsuite ts_to_base64("to_base64");
 
 	for (std::size_t i = 4; i <= 10; ++i)
 	{
-		ts.add(perform_test(dist, gen, 1024 * std::pow(2, i)));
+		ts_to_base64.add(perform_test_to_base64(dist, gen, 1024 * std::pow(2, i)));
 	}
 
-	std::cout << ts.to_string() << std::endl;
+	std::cout << ts_to_base64.to_string() << std::endl;
+
+	benchmark::testsuite ts_from_base64("from_base64");
+
+	for (std::size_t i = 4; i <= 10; ++i)
+	{
+		ts_from_base64.add(perform_test_from_base64(dist, gen, 1024 * std::pow(2, i)));
+	}
+
+	std::cout << ts_from_base64.to_string() << std::endl;
 
 	if (variables.count("csv"))
 	{
-		for (auto const & r : ts.to_csv())
+		for (auto const & r : ts_to_base64.to_csv())
 		{
-			std::string filename(ts.title());
+			std::string filename(ts_to_base64.title());
+			filename.append("_");
+			filename.append(std::to_string(r.quantity));
+			filename.append(".csv");
+			std::replace(filename.begin(), filename.end(), ' ', '_');
+
+			std::ofstream file;
+			file.open(filename);
+			file << r.data;
+			file.close();
+		}
+
+		for (auto const & r : ts_from_base64.to_csv())
+		{
+			std::string filename(ts_from_base64.title());
 			filename.append("_");
 			filename.append(std::to_string(r.quantity));
 			filename.append(".csv");
@@ -159,18 +259,38 @@ int main(int argc, char * argv[])
 
 	if (variables.count("csv-all"))
 	{
-		auto r = ts.to_csv(false);
-
-		if (!r.empty())
+		// write base64 encoder test results
 		{
-			std::string filename(ts.title());
-			filename.append("_all.csv");
-			std::replace(filename.begin(), filename.end(), ' ', '_');
+			auto r = ts_to_base64.to_csv(false);
 
-			std::ofstream file;
-			file.open(filename);
-			file << r.front().data;
-			file.close();
+			if (!r.empty())
+			{
+				std::string filename(ts_to_base64.title());
+				filename.append("_all.csv");
+				std::replace(filename.begin(), filename.end(), ' ', '_');
+
+				std::ofstream file;
+				file.open(filename);
+				file << r.front().data;
+				file.close();
+			}
+		}
+
+		// write base64 decoder test results
+		{
+			auto r = ts_from_base64.to_csv(false);
+
+			if (!r.empty())
+			{
+				std::string filename(ts_from_base64.title());
+				filename.append("_all.csv");
+				std::replace(filename.begin(), filename.end(), ' ', '_');
+
+				std::ofstream file;
+				file.open(filename);
+				file << r.front().data;
+				file.close();
+			}
 		}
 	}
 
