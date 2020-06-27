@@ -1,16 +1,23 @@
-# R program to plot CSV results of 'bench_sum' program to a single image file
+# R program to plot CSV results of a benchmark program to a single image file
 
 library(readr)
 library(ggplot2)
 library(reshape2)
 library(scales)
 
+args = commandArgs(trailingOnly = TRUE)
+
+if (length(args) < 2)
+{
+    stop("Two arguments must be supplied (title of diagram, file pattern).", call. = FALSE)
+}
+
 scientific_10 <- function(x)
 {
     parse(text = gsub("e", " %*% 10^", scales::scientific_format()(x)))
 }
 
-files = list.files(pattern = "*_all.csv", full.names = TRUE)
+files = list.files(pattern = args[2], full.names = TRUE)
 
 for (file in files)
 {
@@ -22,7 +29,7 @@ for (file in files)
         geom_point() +
         scale_x_continuous(label = scientific_10) +
         scale_y_continuous(labels = comma) +
-        labs(title = "Sum Array Of Bytes", x = "Array Length (Bytes)", y = "Average Time (Microseconds)") +
+        labs(title = args[1], x = "Array Length (Bytes)", y = "Average Time (Microseconds)") +
         theme(legend.title = element_blank()) + theme(plot.title = element_text(hjust = 0.5))
 
     file = gsub(".csv", ".jpg", file)
