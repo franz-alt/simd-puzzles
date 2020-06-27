@@ -113,4 +113,4 @@ if [ -z "$CLANG_INSTALLED" ]; then
 fi
 
 # create plots
-Rscript ../multiplot.R
+Rscript ../multiplot.R "Sum Array Of Bytes" "sum.*_all.csv"
