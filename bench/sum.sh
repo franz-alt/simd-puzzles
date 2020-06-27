@@ -66,9 +66,11 @@ if [ -z "$GCC_INSTALLED" ]; then
     ./bench_sum.gcc-O1 --csv-all
     mv sum_all.csv "sum.$CPU_MODEL_NAME.gcc-O1_all.csv"
 
+    # start benchmark for optimization level O2
     ./bench_sum.gcc-O2 --csv-all
     mv sum_all.csv "sum.$CPU_MODEL_NAME.gcc-O2_all.csv"
 
+    # start benchmark for optimization level O3
     ./bench_sum.gcc-O3 --csv-all
     mv sum_all.csv "sum.$CPU_MODEL_NAME.gcc-O3_all.csv"
 fi
@@ -105,9 +107,11 @@ if [ -z "$CLANG_INSTALLED" ]; then
     ./bench_sum.clang-O1 --csv-all
     mv sum_all.csv "sum.$CPU_MODEL_NAME.clang-O1_all.csv"
 
+    # start benchmark for optimization level O2
     ./bench_sum.clang-O2 --csv-all
     mv sum_all.csv "sum.$CPU_MODEL_NAME.clang-O2_all.csv"
 
+    # start benchmark for optimization level O3
     ./bench_sum.clang-O3 --csv-all
     mv sum_all.csv "sum.$CPU_MODEL_NAME.clang-O3_all.csv"
 fi

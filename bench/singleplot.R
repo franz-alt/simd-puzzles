@@ -1,4 +1,4 @@
-# R program to plot CSV results of 'bench_sum' program to multiple image files
+# R program to plot CSV results of a benchmark program to multiple image files
 
 library(readr)
 library(ggplot2)
