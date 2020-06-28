@@ -5,6 +5,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/project_settings.cmake)
 project(simd-puzzles LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 add_library(${PROJECT_NAME} INTERFACE)
 
