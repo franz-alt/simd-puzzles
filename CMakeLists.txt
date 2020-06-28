@@ -10,6 +10,7 @@ add_library(${PROJECT_NAME} INTERFACE)
 
 # dependencies
 find_package(Boost REQUIRED COMPONENTS program_options)
+find_package(Git QUIET)
 
 # set output directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
