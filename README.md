@@ -32,6 +32,7 @@ The main project directory structure is figured in the following tree.
     ├── cmake
     ├── doc
     │   └── <puzzle docs>
+    ├── docker
     ├── extern
     ├── src
     │   ├── libbenchmark
@@ -48,6 +49,7 @@ The main directories are:
 * bench: Containing scripts to generate benchmarks for each puzzle.
 * cmake: CMake stuff.
 * doc: Subdirectories containing documentation of all puzzles with their performance results.
+* docker: Dockerfiles to build project based on different Linux systems.
 * extern: Used GIT submodules.
 * src:
     * libbenchmark: Library containing code to manage the results of testruns, testsuites and to generate the CSV result files.
@@ -68,12 +70,28 @@ The main directories are:
 
 ### Example
 
+#### Build At Console
+
 To build the library on Unix/Linux try:
 
     mkdir build
     cd build
     cmake ..
     make -j`nproc`
+
+#### Build With Docker
+
+At the [docker](docker) subdirectory several Dockerfiles are available to build the library based on different Linux distributions.
+
+To build a Docker image based on Debian Buster type:
+
+    docker build -f Dockerfile.debian-buster --force-rm -t simd-puzzles:0.1 .
+
+inside the [docker](docker) subdirectory. When building a Docker image all benchmark scripts are processed.
+
+A bash script inside the Docker container could be started with:
+
+    docker run -it simd-puzzles:0.1 /bin/bash
 
 ## Extend Puzzles
 

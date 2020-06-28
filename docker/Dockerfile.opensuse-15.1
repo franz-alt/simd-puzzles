@@ -1,0 +1,44 @@
+FROM opensuse/leap:15.1
+
+# define version of Boost libraries
+ENV BOOST_MAJOR_VERSION=1
+ENV BOOST_MINOR_VERSION=66
+ENV BOOST_PATCH_VERSION=0
+
+ENV BOOST_FULL_VERSION=${BOOST_MAJOR_VERSION}_${BOOST_MINOR_VERSION}_${BOOST_PATCH_VERSION}
+
+# install dependencies
+RUN zypper --non-interactive install --no-recommends \
+  gcc8-c++ \
+  clang \
+  make \
+  cmake \
+  git \
+  libboost_headers${BOOST_FULL_VERSION}-devel \
+  libboost_program_options${BOOST_FULL_VERSION} \
+  libboost_program_options${BOOST_FULL_VERSION}-devel \
+  R-base
+
+# Hint:
+# For the SIMD puzzles we need at least GCC 8. The symbolic links to 'gcc' and 'g++' are missing at
+# default, so we have to create them manually.
+RUN ln -s /usr/bin/gcc-8 /usr/bin/gcc
+RUN ln -s /usr/bin/g++-8 /usr/bin/g++
+
+# install R script dependencies
+RUN Rscript -e 'install.packages(c("tidyverse", "readr", "ggplot2", "reshape2", "scales"), repos = "http://cran.us.r-project.org")'
+
+# prepare source and build directory
+RUN mkdir -p /source
+RUN mkdir -p /build
+
+# get project from GitHub and clone only the latest 'master' branch
+WORKDIR /source
+RUN git clone --depth=1 -b master https://github.com/franz-alt/simd-puzzles.git
+
+# perform benchmark scripts
+WORKDIR /source/simd-puzzles/bench
+RUN pwd
+RUN ls -lrt
+RUN ./base64.sh
+RUN ./sum.sh

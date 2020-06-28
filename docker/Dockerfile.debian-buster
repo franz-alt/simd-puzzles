@@ -1,0 +1,34 @@
+FROM debian:buster
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# install dependencies
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends \
+  ca-certificates \
+  gcc \
+  g++ \
+  clang \
+  make \
+  cmake \
+  git \
+  libboost-all-dev \
+  r-base
+
+# install R script dependencies
+RUN Rscript -e 'install.packages(c("tidyverse", "readr", "ggplot2", "reshape2", "scales"), repos = "http://cran.us.r-project.org")'
+
+# prepare source and build directory
+RUN mkdir -p /source
+RUN mkdir -p /build
+
+# get project from GitHub and clone only the latest 'master' branch
+WORKDIR /source
+RUN git clone --depth=1 -b master https://github.com/franz-alt/simd-puzzles.git
+
+# perform benchmark scripts
+WORKDIR /source/simd-puzzles/bench
+RUN pwd
+RUN ls -lrt
+RUN ./base64.sh
+RUN ./sum.sh
