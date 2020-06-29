@@ -10,44 +10,44 @@ namespace simd::utils {
 
 std::string to_string(__m128i const & data, std::string const & description, bool generate_header, bool descending)
 {
-  std::stringstream ss;
+    std::stringstream ss;
 
-  if (generate_header)
-  {
-      ss << std::string(description.size() + 2, ' ');
+    if (generate_header)
+    {
+        ss << std::string(description.size() + 2, ' ');
 
-      if (descending)
-      {
-          ss << "[127...........................................0]" << std::endl;
-      }
-      else
-      {
-          ss << "[0...........................................127]" << std::endl;
-      }
-  }
+        if (descending)
+        {
+            ss << "[127...........................................0]" << std::endl;
+        }
+        else
+        {
+            ss << "[0...........................................127]" << std::endl;
+        }
+    }
 
-  if (!description.empty())
-  {
-      ss << description << ": ";
-  }
+    if (!description.empty())
+    {
+        ss << description << ": ";
+    }
 
-  const std::uint8_t * raw = reinterpret_cast<const std::uint8_t *>(&data);
+    const std::uint8_t * raw = reinterpret_cast<const std::uint8_t *>(&data);
 
-  ss << "[";
+    ss << "[";
 
-  for (std::uint8_t i = 0; i < 16; ++i)
-  {
-      ss << std::setfill('0') << std::setw(2) << std::right << std::hex << static_cast<int>(raw[descending ? (31 - i) : i]);
+    for (std::uint8_t i = 0; i < 16; ++i)
+    {
+        ss << std::setfill('0') << std::setw(2) << std::right << std::hex << static_cast<int>(raw[descending ? (31 - i) : i]);
 
-      if (i < 15)
-      {
-          ss << "|";
-      }
-  }
+        if (i < 15)
+        {
+            ss << "|";
+        }
+    }
 
-  ss << "]" << std::endl;
+    ss << "]" << std::endl;
 
-  return ss.str();
+    return ss.str();
 }
 
 std::string to_string(__m256i const & data, std::string const & description, bool generate_header, bool descending)
