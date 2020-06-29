@@ -37,7 +37,7 @@ std::string to_string(__m128i const & data, std::string const & description, boo
 
     for (std::uint8_t i = 0; i < 16; ++i)
     {
-        ss << std::setfill('0') << std::setw(2) << std::right << std::hex << static_cast<int>(raw[descending ? (31 - i) : i]);
+        ss << std::setfill('0') << std::setw(2) << std::right << std::hex << static_cast<int>(raw[descending ? (15 - i) : i]);
 
         if (i < 15)
         {
