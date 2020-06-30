@@ -31,4 +31,5 @@ WORKDIR /source/simd-puzzles/bench
 RUN pwd
 RUN ls -lrt
 RUN ./base64.sh
+RUN ./scale.sh
 RUN ./sum.sh
