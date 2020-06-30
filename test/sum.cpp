@@ -8,6 +8,8 @@
 #include <libsimd/algorithms/sum/avx2/hadd.hpp>
 #include <libsimd/algorithms/sum/avx2/sad.hpp>
 
+namespace {
+
 std::vector<std::uint8_t> generate_ascending_data(std::size_t size)
 {
     std::vector<std::uint8_t> data;
@@ -19,6 +21,8 @@ std::vector<std::uint8_t> generate_ascending_data(std::size_t size)
     }
 
     return data;
+}
+
 }
 
 TEST(test_sum, sum_naive)
