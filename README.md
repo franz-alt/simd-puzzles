@@ -20,7 +20,8 @@ With this project I would like to collect some algorithmic SIMD puzzles and comp
 
 * Further more puzzles
 * AVX-512 and NEON implementations
-* Compare multithreaded executions
+* Compare multithreaded executions (e.g. `std::async`, OpenMP, ...)
+* Better diagrams to compare algorithms on different architectures
 * ...
 
 ## Directory Structure
@@ -96,7 +97,21 @@ A bash script inside the Docker container could be started with:
 
 ## Extend Puzzles
 
-TODO
+The following steps are necessary to create a new puzzle:
+
+1. Create a new folder for your puzzle at directory `src/libsimd/algorithms`.
+2. Create a non-vectorized implementation of your puzzle. This is helpful to have a comparision of speedup against your (multiple) vectorization strategies.
+3. Create a new folder inside your puzzle folder for your SIMD technique (e.g. `src/libsimd/algorithms/`*(puzzle)*`/avx2`).
+4. Create a `.cpp` and `.hpp` file for your vectorization strategy.
+5. Extend `CMakeLists.txt` at directory `src/libsimd/algorithms` with your `.cpp` and `.hpp` files.
+6. Create a unit test for your puzzle at directory `test`.
+7. Extend `CMakeLists.txt` at directory `test/libsimd/algorithms` with your unit test `.cpp` file.
+8. Create a new folder for your puzzle benchmark program at directory `src`.
+9. Simplify things: Copy `CMakeLists.txt` and `main.cpp` from an existing puzzle, so you speedup things a little bit.
+10. Extend `CMakeLists.txt` at directory `src` with your new benchmark folder.
+11. Simplify things again: Copy a bash script at directory `bench` to perform an automatic test suite and add the bash script to all available `Dockerfile`s at the end.
+
+Many tiny steps to do to create a new puzzle. :smiley:
 
 ## License
 
